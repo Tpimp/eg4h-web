@@ -1,0 +1,8 @@
+{
+        "name": "engineer4hire",
+        "platforms": ["web"],
+        "apps": {"index": "index"},
+        "minify": true,
+        "sources": ["src"],
+        "web-prefix": true
+}
