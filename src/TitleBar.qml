@@ -6,6 +6,7 @@ Rectangle {
     width:100%;
     color:"black";
     property bool open;
+    property var  currentItem;
     Text{
         anchors.right:parent.right;
         verticalAlignment: Text.AlignBottom;
@@ -17,7 +18,19 @@ Rectangle {
         anchors.top:parent.top;
         anchors.bottom:parent.bottom;
     }
-
+    function openMenu()
+    {
+        titleTop.open = true;
+        titleMenu.setFocus();
+    }
+    function closeMenu()
+    {
+        titleTop.open = false;
+        if(titleTop.currentItem != null)
+        {
+            titleTop.currentItem.setFocus();
+        }
+    }
 
     WebItem{
         anchors.left:parent.left;
@@ -49,47 +62,85 @@ Rectangle {
                color:"white";
            }
         }
-        focus:true;
+        focus:titleTop.open;
         onClicked:{
-            titleTop.open = !titleTop.open;
+            if(titleTop.open){
+                titleTop.closeMenu();
+            }
+            else{
+                titleTop.openMenu();
+            }
         }
     }
     WebItem{
         id:overlay;
-        width:titleTop.open ? context.system.screenWidth:0;
+        width: titleTop.width;
+        x:titleTop.open ? 0:-titleTop.width;
         height: context.system.screenHeight;
+        //enable: titleTop.open;
         anchors.top:parent.top;
+        anchors.topMargin:titleTop.height;
         border.width: 0;
-        anchors.left:parent.left;
         color:"transparent";
-        opacity:1;
-        focus:true;
+        focus:titleTop.open;
         onClicked:{
-            titleTop.open = false;
+            titleTop.closeMenu();
         }
 
         Rectangle{
             id:titleMenu;
-            anchors.topMargin:titleTop.height + 2;
-            anchors.top: parent.top;
+            anchors.topMargin:titleTop.height;
+            x:titleTop.open ? 0:-titleTop.width/2;
             height:parent.height;
             color:"black";
-            border.width: 3;
+            border.width:0;
             opacity: .8;
             radius:2;
-            border.color:"white";
-            width:overlay.width/3 > 320 ? 320: overlay.width/3;
-            anchors.left:parent.left;
-            Grid
-            {
+            width:titleTop.width/2;
+            Column{
                 anchors.fill: parent;
-
+                anchors.margins: 4;
+                spacing:8;
+                MenuItem {
+                    text: "Home";
+                    page: "";
+                    width:titleMenu.width -8;
+                    height:48;
+                    icon:"house.png";
+                    visible:titleTop.open;
+                    onClicked(e):{
+                        console.log("Clicked Home");
+                    }
+                }
+                MenuItem {
+                    text: "Projects";
+                    border.color: "red";
+                    page: "";
+                    width:titleMenu.width -8;
+                    height:48;
+                    icon:"house.png";
+                    visible:titleTop.open;
+                }
+                MenuItem {
+                    border.color: "blue";
+                    text: "Test3";
+                    page: "";
+                    width:titleMenu.width -8;
+                    height:48;
+                    icon:"house.png";
+                    visible:titleTop.open;
+                }
             }
-            Behavior on width { Animation { duration: 400; }}
+            Behavior on x {
+                Animation {
+                    duration: 400;
+                }
+            }
         }
     }
     onCompleted: {
         this.style('position', 'fixed')
         this.style('will-change', 'transform')
+        titleTop.currentItem = null;
     }
 }

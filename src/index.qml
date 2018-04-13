@@ -15,26 +15,22 @@ ScrollView {
         }
     }
 
-    onCompleted: {
-        if (!window.location.hostname)
-            return
 
-        var path = window.location.pathname.split("/")
-        var state = {}
-        if (path[1])
-            state.page = path[1]
-        if (path[2])
-            state.section = path[2]
-        if (path[3])
-            state.element = path[3]
-
-        log("pushState", state, "pathname", window.location.pathname)
-        this._context.location.pushState(state, window.location.pathname, window.location.pathname)
-    }
 
     TitleBar { id: title; z: 2; }
 
     //ColorTheme { id: colorTheme; }
+    Main{
+        id:mainContent;
+        anchors.top:title.bottom;
+        anchors.bottom:parent.bottom;
+        anchors.left:parent.left;
+        anchors.right:parent.right;
+        onCompleted:{
+            title.currentItem = this;
+            this.barHeight = title.height + 4;
+        }
+    }
 
     PageStack {
         id: pages;
@@ -52,7 +48,6 @@ ScrollView {
             }
         }
 
-        Main { }
 //        GettingStarted { }
 //        Download { }
 //        Lessons { }
@@ -65,5 +60,22 @@ ScrollView {
         anchors.top: pages.bottom;
         width: 100%;
         height: 140;
+    }
+    onCompleted: {
+        if (!window.location.hostname)
+            return
+
+        var path = window.location.pathname.split("/")
+        var state = {}
+        if (path[1])
+            state.page = path[1]
+        if (path[2])
+            state.section = path[2]
+        if (path[3])
+            state.element = path[3]
+
+        log("pushState", state, "pathname", window.location.pathname)
+        this._context.location.pushState(state, window.location.pathname, window.location.pathname)
+        console.log("setting current item to main content");
     }
 }
